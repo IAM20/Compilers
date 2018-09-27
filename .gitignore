@@ -1,0 +1,13 @@
+# Git ignore init
+
+# Windows
+*.exe
+
+# IDE
+
+# CLion
+*.iml
+*.xml
+*.txt
+
+
