@@ -10,4 +10,8 @@
 *.xml
 *.txt
 
+# Linux
+*.o
 
+# Lex file
+lex.yy.c
