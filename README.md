@@ -4,17 +4,37 @@
 *******************************
 
 ## Project #1 : Scanner
-> Implementation of C-Scanner
- * [globals.h](https://github.com/)
- * [main.c](https://github.com/)
- * [scan.c](https://github.com/)
- * [util.c](https://github.com/)
+> Implementation of C-Scanner using lex.
+ * [globals.h](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/globals.h)
+ * [main.c](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/main.c)
+ * [scan.h](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/scan.h)
+ * [util.c](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/util.c)
+ * [util.h](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/util.h)
 
 ### Build dependencies
-> Need GCC 5.xx or more. <br>
-> Make
+> GCC 5.xx or more. <br>
+> Make <br>
+> lex
 
 ### How to build
+> in 01_project directory
 ```bash
 $ make
 ```
+> If you wanna generate test, (also in 01_project directory)
+```bash
+$ test.sh
+```
+
+scan.h uses `lex.yy.c` and c-- 's lex file is [cminus.l](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/cminus.l)<br>
+I use lex program's outputs as much as possible. <br>
+So, below's function and variables have been used.
+```cpp
+int yylex();
+extern FILE *yyin;
+extern char *yytext;
+```
+
+### Tests
+Test code will be updated soon!
+
