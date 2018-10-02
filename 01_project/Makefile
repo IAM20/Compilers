@@ -38,5 +38,5 @@ $(OBJS_FLEX): $(CMINUSL) $(HEADERS)
 #	$(CC) $(CFLAGS) -c util.c
 
 clean:
-	rm -f ./src/lex.yy.c ./bin/* ./src/*.o
+	rm -f ./src/lex.yy.c ./bin/* ./src/*.o *.log
 

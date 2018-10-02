@@ -15,3 +15,6 @@
 
 # Lex file
 lex.yy.c
+
+# Test output
+*.log
