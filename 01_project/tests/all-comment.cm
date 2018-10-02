@@ -1,0 +1,17 @@
+/*
+  Hello world!!
+#include <stdio.h>
+#include <stdlib.h>  
+
+int
+main(int argc, char * argv[]) {
+
+  File * fp = fopen(argv[1], "r"); 
+  if(fp == NULL) {
+    perror("Failed to open file");
+  }
+
+  return 0;
+} 
+ 
+*/

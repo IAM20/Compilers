@@ -1,0 +1,30 @@
+/* Test fault tolerancy. */
+
+#include <iostream>
+#include <queue>
+#include <vector>
+
+void bfs(int start_vertex, vector<vector<int>> v) {
+  int length = v.size();
+  bool visited[] = new bool[length];
+  queue<int> q;
+  q.push(start_vertex);
+  visited[start_vertex] = true;
+
+  while(!q.empty()) {
+    vector<int> edges = v.at(q.front());
+    length = edges.size();
+
+    for(int i = 0; i < length; i++) {
+      if(visited[edges.at(i)]) continue;
+      visited[edges.at(i)] = true;
+      q.push(edges.at(i));
+    }
+  }
+}
+
+int
+main(int argc, char * argv[]) {
+  std::cout << "Fault tolerancy!!! " << std::endl;
+  return 0;
+}

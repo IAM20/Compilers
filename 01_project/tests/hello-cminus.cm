@@ -1,0 +1,7 @@
+/* Simple hello world program written in c-- */
+
+int
+main(void) {
+  output("hello world!");
+  return 0;
+}
