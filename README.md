@@ -9,6 +9,10 @@
 </p>
 
 ## Project #1 : Scanner
+<p align=center>
+<img src="https://user-images.githubusercontent.com/35682872/46332622-2e3d6f80-c658-11e8-8203-bfaae92a4fda.gif"/>
+</p>
+
 > Implementation of C-Scanner using lex.
  * [globals.h](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/globals.h)
  * [main.c](https://hconnect.hanyang.ac.kr/2018_ELE4029_10734/2018_ELE4029_2013008264/blob/master/01_project/src/main.c)
@@ -45,7 +49,4 @@ int yylex();
 extern FILE *yyin;
 extern char *yytext;
 ```
-
-### Tests
-Test code will be updated soon!
 

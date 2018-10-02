@@ -1,4 +1,7 @@
 # Project 1 Scanner
+<p align=center>
+<img src="https://user-images.githubusercontent.com/35682872/46332622-2e3d6f80-c658-11e8-8203-bfaae92a4fda.gif"/>
+</p>
 
 <p align=center>
 <img src="https://img.shields.io/badge/gcc-5.xx-green.svg"/>
