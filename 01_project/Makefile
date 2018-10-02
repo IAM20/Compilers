@@ -1,8 +1,8 @@
-MAKEFILE 	= Makefile
+MAKEFILE	= Makefile
 
-CC 				= gcc
+CC				= gcc
 
-CFLAGS 		= -lfl\
+CFLAGS		= -lfl\
 
 SRCS			:= $(wildcard src/*.c)
 
@@ -18,7 +18,7 @@ BIN				= ./bin/
 
 CMINUSL		= src/cminus.l
 
-TARGET 		= cminus_flex
+TARGET		= cminus_flex
 
 $(TARGET): $(OBJS) $(HEADER) $(OBJS_FLEX)
 	$(CC) $(CFLAGS) $(OBJS) $(OBJS_FLEX) -o $(BIN)$(TARGET)
@@ -38,4 +38,5 @@ $(OBJS_FLEX): $(CMINUSL) $(HEADERS)
 #	$(CC) $(CFLAGS) -c util.c
 
 clean:
-	rm ./src/lex.yy.c ./bin/ ./src/*.o
+	rm -f ./src/lex.yy.c ./bin/* ./src/*.o
+
