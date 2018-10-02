@@ -2,6 +2,11 @@
 > Professor : Yong-jun park<br> Student number : 2013008264 <br> Student name : Young-dae Lee
 
 *******************************
+<p align=center>
+<img src="https://img.shields.io/badge/gcc-5.xx-green.svg"/>
+<img src="https://img.shields.io/badge/dependencies-make-green.svg"/>
+<img src="https://img.shields.io/badge/dependencies-lex-green.svg"/>
+</p>
 
 ## Project #1 : Scanner
 > Implementation of C-Scanner using lex.
@@ -15,6 +20,12 @@
 > GCC 5.xx or more. <br>
 > Make <br>
 > lex
+
+### Build status
+
+|branch | Ubuntu 18.04 |
+|----  |   ----   |
+|master|  <img src="https://img.shields.io/badge/build-passing-green.svg"/> |
 
 ### How to build
 > in 01_project directory
