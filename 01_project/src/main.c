@@ -33,7 +33,9 @@ main(int argc, char * argv[]) {
     perror("Failed to open file");
     return 1;
   }
+  
   yyin = code;
+  printf("C-MINUS COMPILATION: %s\n", argv[1]);
 
   if(printToken(yyin)) {
     fprintf(stderr, "Failed to scan code.\n");
