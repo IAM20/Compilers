@@ -18,3 +18,9 @@ lex.yy.c
 
 # Test output
 *.log
+
+# Tiny compiler
+*.unx
+
+# cscope
+cscope.*
