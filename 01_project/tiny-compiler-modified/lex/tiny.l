@@ -23,6 +23,12 @@ whitespace  [ \t]+
 %%
 
 "if"            {return IF;}
+"while"         {return WHILE;}
+"int"           {return INT;}
+"else"          {return ELSE;}
+"void"          {return VOID;}
+"return"        {return RETURN;}
+
 "then"          {return THEN;}
 "else"          {return ELSE;}
 "end"           {return END;}
@@ -40,10 +46,24 @@ whitespace  [ \t]+
 "("             {return LPAREN;}
 ")"             {return RPAREN;}
 ";"             {return SEMI;}
+
+","             {return COMMA;}
+
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
+"/*"            { char before; char now;
+                  before = input();
+                  do
+                  {
+                    now = input();
+                    if(now == EOF) break;
+                    if(now == '\n') lineno++;
+                  } while(before == '*' && now == '/');
+                  printf("Skip comments");
+                }
+                  
 "{"             { char c;
                   do
                   { c = input();

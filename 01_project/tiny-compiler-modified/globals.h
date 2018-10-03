@@ -23,17 +23,20 @@
 #endif
 
 /* MAXRESERVED = the number of reserved words */
-#define MAXRESERVED 8
+#define MAXRESERVED 12
 
 typedef enum 
     /* book-keeping tokens */
    {ENDFILE,ERROR,
     /* reserved words */
-    IF,THEN,ELSE,END,REPEAT,UNTIL,READ,WRITE,
+    IF,ELSE,WHILE,RETURN,INT,VOID
+    /* discard */
+    , THEN,END,REPEAT,UNTIL,READ,WRITE,
     /* multicharacter tokens */
     ID,NUM,
     /* special symbols */
-    ASSIGN,EQ,LT,PLUS,MINUS,TIMES,OVER,LPAREN,RPAREN,SEMI
+    ASSIGN,EQ,NE,LT,LE,GE,GT,PLUS,MINUS,TIMES,OVER,LPAREN,RPAREN,
+    LSQUARE,RSQUARE,LCURLY,RCURLY,SEMI,COMMA
    } TokenType;
 
 extern FILE* source; /* source code text file */

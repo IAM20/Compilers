@@ -38,9 +38,9 @@ cgen.o: cgen.c globals.h symtab.h code.h cgen.h
 	$(CC) $(CFLAGS) -c cgen.c
 
 clean:
-	-rm tiny
-	-rm tm
-	-rm $(OBJS)
+	-rm -f tiny
+	-rm -f tm
+	-rm -f $(OBJS)
 
 tm: tm.c
 	$(CC) $(CFLAGS) tm.c -o tm

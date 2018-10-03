@@ -56,10 +56,15 @@ static struct
     { char* str;
       TokenType tok;
     } reservedWords[MAXRESERVED]
-   = {{"if",IF},{"then",THEN},{"else",ELSE},{"end",END},
-      {"repeat",REPEAT},{"until",UNTIL},{"read",READ},
-      {"write",WRITE}};
-
+   = {{"if",IF},{"else",ELSE},{"while",WHILE},
+     {"return",RETURN},{"int",INT},{"void",VOID},
+     /*********************************************/
+     /*                 Discarded                 */
+     {"then",THEN},{"end",END},{"repeat",REPEAT},
+     {"until",UNTIL},{"read",READ},{"write",WRITE}
+     /*********************************************/
+   };
+    
 /* lookup an identifier to see if it is a reserved word */
 /* uses linear search */
 static TokenType reservedLookup (char * s)
@@ -94,14 +99,25 @@ TokenType getToken(void)
            state = INNUM;
          else if (isalpha(c))
            state = INID;
-         else if (c == ':')
+         else if (c == '=')
            state = INASSIGN;
          else if ((c == ' ') || (c == '\t') || (c == '\n'))
            save = FALSE;
+         else if (c == '/') 
+         { char next = getNextChar();
+           if(next == '*')
+           { save = FALSE;
+             state = INCOMMENT;
+           } else 
+           { ungetNextChar();
+             currentToken = OVER;
+           }
+         }
+         /*
          else if (c == '{')
          { save = FALSE;
            state = INCOMMENT;
-         }
+         }*/
          else
          { state = DONE;
            switch (c)
@@ -124,9 +140,6 @@ TokenType getToken(void)
              case '*':
                currentToken = TIMES;
                break;
-             case '/':
-               currentToken = OVER;
-               break;
              case '(':
                currentToken = LPAREN;
                break;
@@ -135,6 +148,21 @@ TokenType getToken(void)
                break;
              case ';':
                currentToken = SEMI;
+               break;
+             case '{':
+               currentToken = LCURLY;
+                break;
+             case '}':
+               currentToken = RCURLY;
+               break;
+             case '[':
+               currentToken = LSQUARE;
+               break;
+             case ']':
+               currentToken = RSQUARE;
+               break;
+             case ',':
+               currentToken = COMMA;
                break;
              default:
                currentToken = ERROR;
@@ -148,7 +176,10 @@ TokenType getToken(void)
          { state = DONE;
            currentToken = ENDFILE;
          }
-         else if (c == '}') state = START;
+         else if (c == '*') 
+         { char next = getNextChar();
+           if(next == '/') state = START;
+         }
          break;
        case INASSIGN:
          state = DONE;

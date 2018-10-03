@@ -15,8 +15,12 @@
 void printToken( TokenType token, const char* tokenString )
 { switch (token)
   { case IF:
-    case THEN:
     case ELSE:
+    case WHILE:
+    case RETURN:
+    case INT:
+    case VOID:
+    case THEN:
     case END:
     case REPEAT:
     case UNTIL:
@@ -25,15 +29,24 @@ void printToken( TokenType token, const char* tokenString )
       fprintf(listing,
          "reserved word: %s\n",tokenString);
       break;
-    case ASSIGN: fprintf(listing,":=\n"); break;
+    case ASSIGN: fprintf(listing,"=\n"); break;
     case LT: fprintf(listing,"<\n"); break;
-    case EQ: fprintf(listing,"=\n"); break;
+    case EQ: fprintf(listing,"==\n"); break;
+    case LE: fprintf(listing,"<=\n"); break;
+    case GT: fprintf(listing,">\n"); break;
+    case GE: fprintf(listing,">=\n"); break;
+    case NE: fprintf(listing,"!=\n"); break;
     case LPAREN: fprintf(listing,"(\n"); break;
     case RPAREN: fprintf(listing,")\n"); break;
+    case LSQUARE: fprintf(listing,"[\n"); break;
+    case RSQUARE: fprintf(listing,"]\n"); break;
+    case LCURLY: fprintf(listing, "{\n"); break;
+    case RCURLY: fprintf(listing, "}\n"); break;
     case SEMI: fprintf(listing,";\n"); break;
     case PLUS: fprintf(listing,"+\n"); break;
     case MINUS: fprintf(listing,"-\n"); break;
     case TIMES: fprintf(listing,"*\n"); break;
+    case COMMA: fprintf(listing,",\n"); break;
     case OVER: fprintf(listing,"/\n"); break;
     case ENDFILE: fprintf(listing,"EOF\n"); break;
     case NUM:
@@ -108,7 +121,7 @@ char * copyString(char * s)
 /* Variable indentno is used by printTree to
  * store current number of spaces to indent
  */
-static indentno = 0;
+static int indentno = 0;
 
 /* macros to increase/decrease indentation */
 #define INDENT indentno+=2
