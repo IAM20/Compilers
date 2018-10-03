@@ -3,47 +3,32 @@
 # Gnu C Version
 # K. Louden 2/3/98
 #
+MAKEFILE = Makefile
 
 CC = gcc
 
 CFLAGS = 
 
-OBJS = main.o util.o scan.o parse.o symtab.o analyze.o code.o cgen.o
+SRCS := $(wildcard src/*.c)
+SRCS := $(filter-out src/tm.c, $(SRCS))
+
+HEADERS := $(wildcard src/*.h)
+
+OBJS := $(SRCS:.c=.o)
+
+BIN =./bin/
 
 tiny: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o tiny
-
-main.o: main.c globals.h util.h scan.h parse.h analyze.h cgen.h
-	$(CC) $(CFLAGS) -c main.c
-
-util.o: util.c util.h globals.h
-	$(CC) $(CFLAGS) -c util.c
-
-scan.o: scan.c scan.h util.h globals.h
-	$(CC) $(CFLAGS) -c scan.c
-
-parse.o: parse.c parse.h scan.h globals.h util.h
-	$(CC) $(CFLAGS) -c parse.c
-
-symtab.o: symtab.c symtab.h
-	$(CC) $(CFLAGS) -c symtab.c
-
-analyze.o: analyze.c globals.h symtab.h analyze.h
-	$(CC) $(CFLAGS) -c analyze.c
-
-code.o: code.c code.h globals.h
-	$(CC) $(CFLAGS) -c code.c
-
-cgen.o: cgen.c globals.h symtab.h code.h cgen.h
-	$(CC) $(CFLAGS) -c cgen.c
+	$(CC) $(CFLAGS) $(OBJS) -o ${BIN}tiny
 
 clean:
-	-rm -f tiny
-	-rm -f tm
-	-rm -f $(OBJS)
+	-rm -f ./bin/tiny
+	-rm -f ./bin/tm
+	-rm -f ./src/*.o
+	-rm -f *.log
 
 tm: tm.c
-	$(CC) $(CFLAGS) tm.c -o tm
+	$(CC) $(CFLAGS) tm.c -o ./bin/tm
 
 all: tiny tm
 
