@@ -5,6 +5,7 @@ CC				= gcc
 CFLAGS		= -lfl\
 
 SRCS			:= $(wildcard src/*.c)
+SRCS			:= $(filter-out src/lex.yy.c, $(SRCS))
 
 SRCS_FLEX = ./src/lex.yy.c
 
