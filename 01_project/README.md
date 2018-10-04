@@ -1,15 +1,15 @@
 # Project 1 Scanner
 
-## Using-lex scanner example
+## Using-lex scanner build & sample test
 <p align=center>
-<img src="https://user-images.githubusercontent.com/35682872/46332622-2e3d6f80-c658-11e8-8203-bfaae92a4fda.gif"/>
+<img src="https://user-images.githubusercontent.com/35682872/46450970-0c1a2d80-c7cf-11e8-8f8c-153d5c7acb11.gif"/>
 </p>
 
 ********************************
 
-## Tiny-Compiler modified scanner example
+## Tiny-Compiler-modified scanner build & sample test
 <p align=center>
-<img src="https://user-images.githubusercontent.com/35682872/46332622-2e3d6f80-c658-11e8-8203-bfaae92a4fda.gif"/>
+<img src="https://user-images.githubusercontent.com/35682872/46450968-0b819700-c7cf-11e8-9f0a-b014f6afc345.gif"/>
 </p>
 
 <p align=center>
