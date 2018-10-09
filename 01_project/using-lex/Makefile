@@ -2,7 +2,14 @@ MAKEFILE	= Makefile
 
 CC				= gcc
 
-CFLAGS		= -lfl\
+UNAME_S   := $(shell uname -s)
+
+CFLAGS		:= 
+ifeq ($(UNAME_S),Darwin)
+	CFLAGS += -ll
+else
+	CFLAGS += -lfl
+endif
 
 SRCS			:= $(wildcard src/*.c)
 SRCS			:= $(filter-out src/lex.yy.c, $(SRCS))
@@ -24,19 +31,11 @@ TARGET		= cminus_flex
 $(TARGET): $(OBJS) $(HEADER) $(OBJS_FLEX)
 	$(CC) $(CFLAGS) $(OBJS) $(OBJS_FLEX) -o $(BIN)$(TARGET)
 
-
-#
-#main.o: main.c util.h util.c scan.h cminus.l globals.h
-#	$(CC) $(CFLAGS) -c main.c
-
 $(OBJS_FLEX): $(CMINUSL) $(HEADERS)
 	flex $(CMINUSL)
 	mv lex.yy.c src/
 	$(CC) $(CFLAGS) -c $(SRCS_FLEX)
 	mv lex.yy.o src/
-
-#util.o: util.c globals.h util.h
-#	$(CC) $(CFLAGS) -c util.c
 
 clean:
 	rm -f ./src/lex.yy.c ./bin/* ./src/*.o *.log

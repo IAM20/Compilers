@@ -9,7 +9,7 @@ printToken(FILE * fp) {
   int token;
   int line = 0;
   int tmp;
-  while(token = yylex()) {
+  while((token = yylex()) != 0) {
     switch(token) {
     case IF:
       printf("\t%d reserved word: if\n", line);
@@ -107,4 +107,5 @@ printToken(FILE * fp) {
       return 1;
     }
   }
+  return 0;
 }
