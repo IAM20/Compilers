@@ -34,7 +34,8 @@ typedef enum {
   COMMA,    // ,
   LCOMMENT, // /*
   RCOMMENT, // */
-  NEWLINE   // \n
+  NEWLINE,  // \n
+  ENDOFFILE // eof   
 } TokenType;
 
 extern FILE * source;

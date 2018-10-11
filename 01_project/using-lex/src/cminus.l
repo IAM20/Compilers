@@ -43,5 +43,6 @@ return            { return RETURN; }
 "}"               { return RCURLY; }
 "/*"              { return LCOMMENT; }
 "*/"              { return RCOMMENT; }
+<<EOF>>           { return ENDOFFILE; }
 .                 { /* do nothing */ }
 %%

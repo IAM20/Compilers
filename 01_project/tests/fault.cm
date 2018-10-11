@@ -27,4 +27,5 @@ int
 main(int argc, char * argv[]) {
   std::cout << "Fault tolerancy!!! " << std::endl;
   return 0;
-}
+
+/* hell world! *

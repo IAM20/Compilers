@@ -97,10 +97,18 @@ printToken(FILE * fp) {
     case LCOMMENT:
       while((tmp = yylex()) != RCOMMENT) {
         if(tmp == NEWLINE) line++;
+        if(tmp == ENDOFFILE) {
+          fprintf(stderr, "UNEXPECTED RETURN TOKEN NUMBER : %d\n", token);
+          return 1;
+        }
       }
       break;
     case NEWLINE:
       line++;
+      break;
+    case ENDOFFILE:
+      printf("\tEOF\n");
+      return 0;
       break;
     default:
       printf("UNEXPECTED RETURN TOKEN NUMBER : %d\n", token);
