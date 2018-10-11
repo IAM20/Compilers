@@ -32,9 +32,7 @@ $ make
 |program | Ubuntu 18.04 | Windows | X OS |
 |----  |   ----   | ---- | ---- |
 |tiny-compiler<br>modified|  <img src="https://img.shields.io/badge/build-passing-green.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/>  |
-| using-lex | <img src="https://img.shields.io/badge/build-passing-green.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/>  |
-
-
+| using-lex | <img src="https://img.shields.io/badge/build-passing-green.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/> | <img src="https://img.shields.io/badge/build-passing-green.svg"/>  |
 
 ### How to generate test
 Both scanner has test c-minus code. <br> If you call `test.sh` you can test scanner.
@@ -50,6 +48,32 @@ So, I changed source codes.
 `globals.h, scan.c, util.c, main.c`<br>
 I just add some new tokens `int, while, etc...` <br>
 And modified, comment case in scan.c. <br>
+
+#### This compiler cannot be built in OS X. (10/9/2018) <br>
+Error message.
+```shell
+clang: error: unable to execute command: Segmentation fault: 11
+clang: error: clang frontend command failed due to signal (use -v to see invocation)
+Apple LLVM version 10.0.0 (clang-1000.10.44.2)
+Target: x86_64-apple-darwin18.0.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+clang: note: diagnostic msg: PLEASE submit a bug report to http://developer.apple.com/bugreporter/ and include the crash backtrace, preprocessed source, and associated run script.
+clang: note: diagnostic msg: 
+********************
+
+PLEASE ATTACH THE FOLLOWING FILES TO THE BUG REPORT:
+Preprocessed source(s) and associated run script(s) are located at:
+clang: note: diagnostic msg: /var/folders/d8/8qsxwt_14bqgvf4kh6r4qpph0000gn/T/parse-bbf491.c
+clang: note: diagnostic msg: /var/folders/d8/8qsxwt_14bqgvf4kh6r4qpph0000gn/T/parse-bbf491.sh
+clang: note: diagnostic msg: Crash backtrace is located in
+clang: note: diagnostic msg: /Users/ydlee/Library/Logs/DiagnosticReports/clang_<YYYY-MM-DD-HHMMSS>_<hostname>.crash
+clang: note: diagnostic msg: (choose the .crash file that corresponds to your crash)
+clang: note: diagnostic msg: 
+
+********************
+make: *** [src/parse.o] Error 254
+```
 
 *****************************
 ### Using-lex
