@@ -9,6 +9,7 @@
 *.iml
 *.xml
 *.txt
+!REPORT.txt
 
 # Linux
 *.o
