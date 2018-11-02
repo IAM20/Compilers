@@ -36,10 +36,12 @@ main(int argc, char * argv[]) {
   
   yyin = code;
   printf("C-MINUS COMPILATION: %s\n", argv[1]);
-
-  if(printToken(yyin)) {
-    fprintf(stderr, "Failed to scan code.\n");
-    return 1;
+  int token;
+  while((token = yylex())) {
+    if(printToken(token)) {
+      fprintf(stderr, "Failed to scan code.\n");
+      return 1;
+    }
   }
 
   return 0;
