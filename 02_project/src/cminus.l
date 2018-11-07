@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include "globals.h"
 #include "scan.h"
+#include "cminus.tab.h"
 
+char tokenString[1024];
 int numLine = 0;
 %}
 
@@ -19,7 +21,7 @@ return            { return RETURN; }
 
 " "
 \t
-\n                { return NEWLINE; }
+\n                { yylineno++; }
 
 
 "+"               { return PLUS; }
@@ -41,8 +43,32 @@ return            { return RETURN; }
 "]"               { return RSQUARE; }
 "{"               { return LCURLY; }
 "}"               { return RCURLY; }
-"/*"              { return LCOMMENT; }
-"*/"              { return RCOMMENT; }
-<<EOF>>           { return ENDOFFILE; }
+"/*"              {
+                    char before; char now;
+                    before = input();
+                    do {
+                      now = input();
+                      if(now == EOF) break;
+                      if(now == '\n') yylineno++;
+                      if(before == '*' && now == '/') {
+                        break;
+                      } else {
+                        before = now;
+                      }
+                    } while(1);
+                  }
 .                 { /* do nothing */ }
 %%
+
+int getToken(void)
+{
+  static int first = 1;
+  if(!first) {
+    strncpy(tokenString, yytext, 1024);
+  }
+  first = 0;
+  int currentToken = yylex();
+  return currentToken;
+}
+
+
