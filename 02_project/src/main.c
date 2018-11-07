@@ -1,4 +1,5 @@
 #include "scan.h"
+#include "cminus.tab.h"
 #include "globals.h"
 #include "util.h"
 #include <stdio.h>
@@ -23,7 +24,6 @@ FILE * code;
 
 int
 main(int argc, char * argv[]) {
-  
   if(argc != 2) {
     fprintf(stderr, "USAGE : %s FILE_NAME\n", argv[0]);
     return 0;
@@ -36,13 +36,21 @@ main(int argc, char * argv[]) {
   
   yyin = code;
   printf("C-MINUS COMPILATION: %s\n", argv[1]);
+  
   int token;
+  /*
   while((token = yylex())) {
+    //parse(); 
     if(printToken(token)) {
       fprintf(stderr, "Failed to scan code.\n");
       return 1;
     }
+    if(token == ENDOFFILE) {
+      break;
+    }
   }
+  */
+  printTree(parse());
 
   return 0;
 }

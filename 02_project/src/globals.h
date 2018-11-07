@@ -1,41 +1,38 @@
 #include <stdio.h>
 #define MAXRESERVED 12
+#define MAXCHILDREN 5
 
-typedef enum {
-  /* Reserved words */
-  IF = 1, ELSE, WHILE, RETURN, INT, VOID,
+typedef int TokenType;
+
+typedef enum { 
+  IfStmt, CompStmt, ExprStmt, IterStmt, ReturnStmt,
+  Expr, SimExpr, AdditiveExpr, OpExpr, NumExpr, IdExpr,
+  VarDeclar, FunDeclar,
+  TypeSpecifier,
+  Param,
+  Var,
+  Func,
+  Args,
+}NodeKind;
+
+typedef enum { Void, Integer, VoidArr, IntArr } ExpectedType;
+
+typedef struct treeNode {
+  struct treeNode * child[MAXCHILDREN];
+  struct treeNode * sibling;
+  int lineno;
+  NodeKind nodeKind;
   
-  /* Discarded */
-  THEN, END, REPEAT, UNTIL, READ, WRITE,
-  /*************/
-
-  /* Multicharacter inputs */
-  ID, NUM,
+  union {
+    TokenType op;
+    int value;
+    char * name;
+  } attr;
   
-  /* Special symbols */
-  ASSIGN,   // =
-  EQ,       // ==
-  NE,       // !=
-  LT,       // <
-  LE,       // <=
-  GT,       // >
-  GE,       // >=
-  PLUS,     // +
-  MINUS,    // -
-  TIMES,    // *
-  OVER,     // '/'
-  LPAREN,   // '('
-  RPAREN,   // ')'
-  LSQUARE,  // '[' 
-  RSQUARE,  // ']'
-  LCURLY,   // '{'
-  RCURLY,   // '}'
-  SEMI,     // ;
-  COMMA,    // ,
-  LCOMMENT, // /*
-  RCOMMENT, // */
-  NEWLINE,  // \n
-  ENDOFFILE // eof   
-} TokenType;
+  int isArray;
+  ExpectedType expectedType;
+} TreeNode;
 
+TreeNode * parse(void);
+int yyparse(void);
 extern FILE * source;
