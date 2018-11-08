@@ -274,13 +274,9 @@ void printTree( TreeNode * tree )
         printSpaces();
         printf("Compound statement : \n");
         break;
-      case ExprStmt:
-        //printSpaces();
-        //printf("Expr statement\n");
-        break;
       case IterStmt:
-        //printSpaces();
-        //printf("Iter statement\n");
+        printSpaces();
+        printf("While : \n");
         break;
       case ReturnStmt:
         printSpaces();
@@ -305,10 +301,6 @@ void printTree( TreeNode * tree )
         printf("Operation : ");
         printOperation(tree->attr.op);
         printf("\n");
-        break;
-      case OpExpr:
-        //printSpaces();
-        //printf("Operation\n");
         break;
       case NumExpr:
         printSpaces();
@@ -335,10 +327,6 @@ void printTree( TreeNode * tree )
         printType(tree->expectedType);
         printf("\n");
         break;
-      case TypeSpecifier:
-        //printSpaces();
-        //printf("Type specifier\n");
-        break;
       case Param:
         printSpaces();
         printf("Single Parameter, ");
@@ -357,9 +345,8 @@ void printTree( TreeNode * tree )
         printSpaces();
         printf("Call, name : %s, with arguments below\n", tree->attr.name);
         break;
-      case Args:
-        //printSpaces();
-        //printf("Argument\n");
+      case ExprStmt:
+        /* Nothing to print. */
         break;
       default:
         printSpaces();

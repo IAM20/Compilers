@@ -54,7 +54,6 @@ declaration       : vardeclaration { $$ = $1; };
 vardeclaration   : typespecifier id SEMI
                     { 
                       $$ = newNode(VarDeclar);
-                      $$->child[0] = $1;
                       $$->attr.name = $2->attr.name;
                       $$->expectedType = $1->expectedType;
                       $$->isArray = 0;
@@ -83,9 +82,7 @@ typespecifier     : INT {
 fundeclaration    : typespecifier id LPAREN params RPAREN compoundstmt
                     {
                       $$ = newNode(FunDeclar);
-                      $$->child[0] = $1;
-                      $$->child[1] = $4;
-                      $$->child[2] = $6;
+                      $$->child[0] = $6;
                       $$->expectedType = $1->expectedType;
                       $$->attr.name = $2->attr.name;
                     }
@@ -114,14 +111,12 @@ paramlist         : paramlist COMMA param {
                   ;
 param             : typespecifier id {
                       $$ = newNode(Param);
-                      $$->child[0] = $1;
                       $$->attr.name = $2->attr.name;
                       $$->expectedType = $1->expectedType;
                       $$->isArray = 0;
                     };
                   | typespecifier id LSQUARE RSQUARE {
                       $$ = newNode(Param);
-                      $$->child[0] = $1;
                       $$->attr.name = $2->attr.name;
                       $$->isArray = 1;
                       $$->expectedType = ($1->expectedType == Integer) ? IntArr : VoidArr;
@@ -242,8 +237,7 @@ var               : id {
 simpleexpression  : additiveexpr relop additiveexpr { 
                       $$ = newNode(SimExpr);
                       $$->child[0] = $1;
-                      $$->child[1] = $2;
-                      $$->child[2] = $3;
+                      $$->child[1] = $3;
                       $$->attr.op = $2->attr.op;
                     };
                   | additiveexpr { $$ = $1; };
@@ -276,8 +270,7 @@ relop             : LE {
 additiveexpr      : additiveexpr addop term { 
                       $$ = newNode(AdditiveExpr);
                       $$->child[0] = $1;
-                      $$->child[1] = $2;
-                      $$->child[2] = $3;
+                      $$->child[1] = $3;
                       $$->attr.op = $2->attr.op;
                     };
                   | term { $$ = $1; };
@@ -294,8 +287,7 @@ addop             : PLUS {
 term              : term mulop factor { 
                       $$ = newNode(AdditiveExpr);
                       $$->child[0] = $1;
-                      $$->child[1] = $2;
-                      $$->child[2] = $3;
+                      $$->child[1] = $3;
                       $$->attr.op = $2->attr.op;
                     };
                   | factor { 
@@ -332,8 +324,7 @@ args              : arglist {
                       $$ = $1;
                     };
                   | /* empty */ { 
-                      $$ = newNode(Args);
-                      $$->expectedType = Void;
+                      $$ = NULL;
                     };
 
 arglist           : arglist COMMA expression { 
