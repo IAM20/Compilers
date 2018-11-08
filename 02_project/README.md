@@ -2,7 +2,7 @@
 ## **Build & Sample test**
 
 <p align=center>
-<img src="https://user-images.githubusercontent.com/35682872/46450970-0c1a2d80-c7cf-11e8-8f8c-153d5c7acb11.gif"/>
+<img src="https://user-images.githubusercontent.com/35682872/48176062-e3e39880-e351-11e8-8926-5f1928254a09.gif"/>
 </p>
 
 <p align=center>
