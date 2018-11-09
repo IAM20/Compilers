@@ -82,7 +82,8 @@ typespecifier     : INT {
 fundeclaration    : typespecifier id LPAREN params RPAREN compoundstmt
                     {
                       $$ = newNode(FunDeclar);
-                      $$->child[0] = $6;
+                      $$->child[0] = $4;
+                      $$->child[1] = $6;
                       $$->expectedType = $1->expectedType;
                       $$->attr.name = $2->attr.name;
                     }
@@ -313,6 +314,15 @@ factor            : LPAREN expression RPAREN {
                       $$ = newNode(NumExpr);
                       $$->attr.value = $1->attr.value;
                     };
+                  | PLUS num {
+                      $$ = newNode(NumExpr);
+                      $$->attr.value = $2->attr.value;
+                    };
+                  | MINUS num {
+                      $$ = newNode(NumExpr);
+                      $$->attr.value = ($2->attr.value) * (-1);
+                    }
+                  ;
 
 call              : id LPAREN args RPAREN {
                       $$ = newNode(Func);

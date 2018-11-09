@@ -17,7 +17,7 @@ void              { return VOID; }
 return            { return RETURN; }
 
 [a-zA-Z]+         { return ID; }
-("-"|"+")?[0-9]+  { return NUM; }
+[0-9]+            { return NUM; }
 
 " "
 \t
