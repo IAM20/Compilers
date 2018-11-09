@@ -5,21 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TRUE        1
-#define FALSE       0
-
-#define NO_PARSE    TRUE
-#define NO_ANALYZE  TRUE
-
-/* allocate and set tracing flag. */
-const int EchoSource    = TRUE;
-const int TraceScan     = TRUE;
-
-const int TraceParse    = FALSE;
-const int TraceAnalyze  = FALSE;
-
-const int TraceCode     = FALSE;
-
 FILE * code;
 
 int
@@ -38,18 +23,6 @@ main(int argc, char * argv[]) {
   printf("C-MINUS COMPILATION: %s\n", argv[1]);
   
   int token;
-  /*
-  while((token = yylex())) {
-    //parse(); 
-    if(printToken(token)) {
-      fprintf(stderr, "Failed to scan code.\n");
-      return 1;
-    }
-    if(token == ENDOFFILE) {
-      break;
-    }
-  }
-  */
   printTree(parse());
 
   return 0;
