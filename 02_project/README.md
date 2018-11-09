@@ -22,7 +22,7 @@ $ make
 ### **Build status**
 |program | Ubuntu 18.04 | Windows | X OS |
 |----  |   ----   | ---- | ---- |
-|parser|  <img src="https://img.shields.io/badge/build-failure-red.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/> | <img src="https://img.shields.io/badge/build-passing-green.svg"/>  |
+|parser|  <img src="https://img.shields.io/badge/build-passing-green.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/> | <img src="https://img.shields.io/badge/build-passing-green.svg"/>  |
 
 ### **How to generate test**
 Test this parser with shell script.
@@ -35,8 +35,151 @@ This is upgrade version of using-lex scanner. So, there has same dependencies wi
 ## **Troubles..**
 There was some troubles, beacause parser has dependency to my lex file. So, I changed my lex file also... 
 
+I has some additional problem, which is dangling operator(?) <br>
+The problem starts my lex file.<br>
+In my lex file (cminus.l), I defines the token `NUM` just like below.
+```cpp
+1   ("-"|"+")?[0-9]+    { return NUM; };
+```
+This evokes unexpected problem.
+```cpp
+1   int a;
+2   int b;
+3   int c;
+4   a = 0;
+5   b = a-10;
+6   c = -10;
+```
+I wanna parse this clauses, successfully.<br>
+But, there's problem. If I can parse line no. 6, line no. 5 cannot be parsed.
+<br>Because token will be delievered as `ID ASSIGN ID NUM` , there must be syntax error.<br>
+
+This can be simply solved.
+First of all, I must modify my lex file.
+```cpp
+1   [0-9]+      {return NUM};   
+```
+Now "+" and "-" always returns `PLUS` `MINUS` token<br>
+Second of all, I modify my yacc file.
+```cpp
+factor      : num {
+                /* Codes here */
+              };
+            | PLUS num {
+                /* Codes here */
+              };
+            | MINUS num {
+                /* Codes here */
+              };
+```
+Then, the problem is solved!!<br>
+Now, my parser can parse below's clauses just like C.
+```cpp
+int a;
+int b;
+a = 0;
+b = a-+10;
+```
+
+And there's another problem so called dangling else problem. <br>
+This is so popular so, there's many solutions in everywhere. <br>
+So I can solve this without additional efforts. <br>
+I solve this problem with precedence. <br>
+
+```cpp
+/* ... */
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
+
+/* ... */
+
+selectionstmt   : IF LPAREN expression RPAREN statement %prec LOWER_THAN_ELSE 
+                  { /* codes ... */ }
+                | IF LPAREN expression RPAREN statement ELSE statement
+                  { /* codes ... */ }
+
+/* ... */
+
+```
+This make lower precedence to
+`IF LPAREN expression RPAREN statement ELSE statement`
+rule.<br>
+So, else can be matched to closest if naturally.
+
 # Korean
-지난번 using-lex scanner 에서 조금 발전한 형태입니다. 그래서, 여전히 flex 에 dependency 를 갖고있습니다. 이번 parser 는 바이슨을 통해 auto generate 됩니다.  때문에, 바이슨을 통해 생성되는 `.c` 파일의 핵심적인 함수들을 사용할 수 있도록 헤더파일을 만들어야 했습니다. 이는 `parse.h` 에 있습니다. 해당 함수는 main.c 에서 호출되며, 그 함수는 AST(Abstract Syntax Tree) 를 반환합니다. 반환된 AST 를 출력해주면서 프로그램은 종료됩니다. 
+지난번 using-lex scanner 에서 조금 발전한 형태입니다. <br>그래서, 여전히 flex 에 dependency 를 갖고있습니다.<br> 이번 parser 는 바이슨을 통해 auto generate 됩니다.<br>  때문에, 바이슨을 통해 생성되는 `.c` 파일의 핵심적인 함수들을 사용할 수 있도록 헤더파일을 만들어야 했습니다.<br> 이는 `parse.h` 에 있습니다.<br> 해당 함수는 main.c 에서 호출되며, 그 함수는 AST(Abstract Syntax Tree) 를 반환합니다.<br> 반환된 AST 를 출력해주면서 프로그램은 종료됩니다. <br>
 
 ## **개발하면서**
-지난번 과제보다 조금 어려움이 있었다. 그 이유는 지난번 과제는 dependency 가 없었지만, 이번 parser 에서는 cminus.l 이란 내가 짠 lex 에, dependency 를 갖고있기 때문이다. 때문에 개발하면서, parser 뿐만아니라, lex 를 조금 더 사용하기 편하게 바꾸어야 하는 과정이 필요했다. 그래서 이번 과제는 yacc 뿐만 아니라, lex 를 전면적으로 고치면서, 지난번 보다 할 것이 조금 많았다. 
+지난번 과제보다 조금 어려움이 있었다. 그 이유는 지난번 과제는 dependency 가 없었지만,<br> 
+이번 parser 에서는 cminus.l 이란 내가 짠 lex 에, dependency 를 갖고있기 때문이다.<br> 때문에 개발하면서, parser 뿐만아니라, lex 를 조금 더 사용하기 편하게 바꾸어야 하는 과정이 필요했다.<br> 
+그래서 이번 과제는 yacc 뿐만 아니라, lex 를 전면적으로 고치면서, 지난번 보다 할 것이 조금 많았다. <br>
+추가적으로 조금 더 고민했던 것은, Dangling operator(?) problem 이다.<br>
+문제의 출발은 lex 파일에서부터 시작된다. <br>
+lex file 에서, NUM 이라는 token 을 아래와 같이 정의해놓은 상황이였다.
+````cpp
+1   ("-"|"+")?[0-9]+    { return NUM; };
+````
+이렇게 정의해놓으면 예상치 못한 문제를 야기하게 되는데,
+이 문제는 아래와 같다.
+```cpp
+1   int a;
+2   int b;
+3   int c;
+4   a = 0;
+5   b = a-10;
+6   c = -10;
+```
+나는 이 구문을 전혀, 그 어떤 문제 없이 parsing 하고 싶었다.<br>
+하지만, 문제가 생긴다. 6번 째 줄의 `c = -10`을 가능하게 만드려면 <br>
+5번째 줄을 처리하기가 애매해진다는 것이다. <br>
+token 이 `ID ASSIGN ID NUM` 으로 처리 되기 때문에, syntax error 를 발생시킬 것이다.<br>
+
+이는 생각보다 간단히 해결되었는데, 일단 lex file 을 수정해야했다.
+```cpp
+1   [0-9]+      {return NUM};   
+```
+이제, "-" 와 "+" 는 무조건 `MINUS` 나, `PLUS` token 으로만 반환 될 것이다. <br>
+
+이후 yacc file 을 수정했다.
+```cpp
+factor      : num {
+                /* Codes here */
+              };
+            | PLUS num {
+                /* Codes here */
+              };
+            | MINUS num {
+                /* Codes here */
+              };
+```
+이렇게 하면, 간단히 해결되는 문제였다.<br>
+아래와 같은 문장도 C 처럼 문제없이  parsing 해온다.
+```cpp
+int a;
+int b;
+a = 0;
+b = a-+10;
+```
+
+또 Dangling else 문제도 있었는데, 이는 너무나 간단하고 <br>
+이를 위해 많은 solution 들이 존재해서, 빠르게 해결하였다.<br>
+precedence 를 줘서, ambiguity 를 없애는 방법을 사용하였다. <br>
+```cpp
+/* ... */
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
+
+/* ... */
+
+selectionstmt   : IF LPAREN expression RPAREN statement %prec LOWER_THAN_ELSE 
+                  { /* codes ... */ }
+                | IF LPAREN expression RPAREN statement ELSE statement
+                  { /* codes ... */ }
+
+/* ... */
+
+```
+%prec 이 붙은 rule 을 먼저 선택하게 만들고, <br>
+이는 가장 가까운 else 와 if 가 자동적으로 matching 되는 결과를 가져오게 된다.

@@ -37,6 +37,6 @@
 ### **Build Status**
 |program | Ubuntu 18.04 | Windows | X OS |
 |----  |   ----   | ---- | ---- |
-|Parser|  <img src="https://img.shields.io/badge/build-failure-red.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/> |<img src="https://img.shields.io/badge/build-passing-green.svg"/> |
+|Parser|  <img src="https://img.shields.io/badge/build-passing-green.svg"/> | <img src="https://img.shields.io/badge/build-failure-red.svg"/> |<img src="https://img.shields.io/badge/build-passing-green.svg"/> |
 ## Project #3 :
 ## Project #4 :
