@@ -1,0 +1,22 @@
+int sum(int a[], int length) {
+  int i;
+  int retval;
+  i = 0;
+  retval = 0;
+  while(i < length) {
+    retval = retval + a[i];
+    i = i + 1;
+  }
+  return retval;
+}
+
+void main(void) {
+  int a[10];
+  int i;
+  i = 0;
+  while(i < 10) {
+    a[i] = i;
+  }
+
+  output(sum(a, 10));
+}

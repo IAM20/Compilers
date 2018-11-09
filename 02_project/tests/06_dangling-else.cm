@@ -1,0 +1,36 @@
+void printPlus(int x, int y) {
+  output(x + y);
+}
+
+int getPlus(int x, int y) {
+  if (x < 0) {
+    x = x * (-1);
+  }
+  if (y < 0) {
+    y = y * (-1);
+  }
+  
+  if (x >= 10) {
+    x = x - 10;
+  }
+
+  if (y >= 100) {
+    y = y - 100;                                 
+  } else {
+    y = y + 100;
+  }
+
+  return x + y;
+}
+
+void main(void) {
+  int x;
+  int y;
+  x = input();
+  y = input();
+
+  printPlus(x, y);
+  output(getPlus(x, y));
+
+  return ;
+}

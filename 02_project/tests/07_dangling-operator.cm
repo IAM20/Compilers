@@ -1,0 +1,14 @@
+/* Dangling operator example
+ * If a = -1; can be parsed,
+ * b = a -10; can also be parsed.
+ * and b = a- -10; can be parsed too!
+ * This dangling operator problem should be solved.
+ */
+
+void
+main(void) {
+  int a; int b;
+  a = 0;
+  b = -10;
+  a = b -100;
+}
