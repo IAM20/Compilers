@@ -69,6 +69,10 @@ vardeclaration   : typespecifier id SEMI
                         $$->expectedType = VoidArr;
                       }
                       $$->isArray = $4->attr.value;
+                      free($1);
+                      free($4);
+                      $1 = NULL;
+                      $4 = NULL;
                     };
 typespecifier     : INT { 
                       $$ = newNode(TypeSpecifier);
@@ -86,6 +90,8 @@ fundeclaration    : typespecifier id LPAREN params RPAREN compoundstmt
                       $$->child[1] = $6;
                       $$->expectedType = $1->expectedType;
                       $$->attr.name = $2->attr.name;
+                      free($2);
+                      $2 = NULL;
                     }
                   ;
 params            : paramlist { $$ = $1; };
@@ -115,12 +121,16 @@ param             : typespecifier id {
                       $$->attr.name = $2->attr.name;
                       $$->expectedType = $1->expectedType;
                       $$->isArray = 0;
+                      free($2);
+                      $2 = NULL;
                     };
                   | typespecifier id LSQUARE RSQUARE {
                       $$ = newNode(Param);
                       $$->attr.name = $2->attr.name;
                       $$->isArray = 1;
                       $$->expectedType = ($1->expectedType == Integer) ? IntArr : VoidArr;
+                      free($2);
+                      $2 = NULL;
                     }
                   ;
 id                : ID {
@@ -226,12 +236,16 @@ var               : id {
                       $$ = newNode(Var);
                       $$->attr.name = $1->attr.name;
                       $$->isArray = 0;
+                      free($1);
+                      $1 = NULL;
                     };
                   | id LSQUARE expression RSQUARE {
                       $$ = newNode(Var);
                       $$->attr.name = $1->attr.name;
                       $$->child[0] = $3;
                       $$->isArray = 1;
+                      free($1);
+                      $1 = NULL;
                     }
                   ;
 
@@ -328,6 +342,8 @@ call              : id LPAREN args RPAREN {
                       $$ = newNode(Func);
                       $$->child[0] = $3;
                       $$->attr.name = $1->attr.name;
+                      free($1);
+                      $1 = NULL;
                     };
 
 args              : arglist { 
