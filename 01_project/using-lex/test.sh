@@ -20,7 +20,7 @@ sleep .5
 cat hello-cminus-test.log
 echo "Progress 5/6"
 sleep .5
-./bin/cminus_flex ../tests/eof.cm > eof-test.log
+./bin/cminus_flex ../tests/token.cm > eof-test.log
 cat eof-test.log
 echo "Progress 6/6"
 echo "Check test results *.log"
