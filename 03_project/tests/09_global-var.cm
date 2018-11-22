@@ -1,0 +1,6 @@
+int hello;
+
+int main(void) {
+  hello = input();
+  output(hello);
+}

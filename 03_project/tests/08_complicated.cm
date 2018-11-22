@@ -1,0 +1,53 @@
+/* There is seven syntax issues
+ * 1. function declaration
+ * 2. if else
+ * 3. function call
+ * 4. while clause.
+ * 5. return clause.
+ * 6. dangling operator.
+ * 7. Complicated expr.
+ *      ex) (10 - 5) * 100 + 50 + (1000 - 50000);
+ */
+
+int fact(int a) {
+  if(a <= 1) {
+    return 1;
+  }
+
+  return a * fact(a - 1);
+}
+
+int iterfact(int a) {
+  int i; int result;
+  i = a;
+  result = a;
+  while(a >= 0) {
+    result = result * a;
+    a = a-+1;
+  }
+
+  return result;
+}
+
+void main(void) {
+  int true;
+  int x;
+  int iterresult;
+  int recurresult;
+  true = (1);
+  while(true) {
+    x = input();
+    iterresult = iterfact(x);
+    recurresult = fact(x);
+
+    output(iterresult);
+    output(recurresult);
+    if(iterresult != recurresult) {
+      output(-1);
+    } else {
+      output(1);
+    }
+  }
+  x = (10 - 5) * 100 + 50 + (1000 - 50000);
+  output(x);
+}

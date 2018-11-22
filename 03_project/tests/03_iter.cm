@@ -1,0 +1,9 @@
+/* This is while loop test! ***/
+void main(void) {
+  int x; int y;
+  while(1) {
+    x = input();
+    y = input();
+    output(x + y);
+  }
+}
