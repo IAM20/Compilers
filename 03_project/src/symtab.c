@@ -1,6 +1,4 @@
-#include "analyze.h"
-#include "line.h"
-#include "globals.h"
+#include "symtab.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,6 +14,10 @@ static int hash (char * key) {
   } return temp;
 }
 
+Scope currScope() {
+  return scopeStack[scopeStackTop - 1];
+}
+
 Scope newScope(char * scopeName) {
   Scope tmp = (Scope)malloc(sizeof(struct scope));
   if(tmp == NULL) {
@@ -24,7 +26,7 @@ Scope newScope(char * scopeName) {
   }
 
   tmp->name = scopeName;
-  scope->parent = NULL;
+  tmp->parent = NULL;
 
   return tmp;
 }
@@ -43,7 +45,6 @@ void insertScopeArr(Scope scope) {
 }
 
 void st_insert(char * scopeName, char * name, ExpectedType type, int lineno, int loc, int paramNum) {
-  //If undeclared var throw exception
   Scope currScope = scopeStack[scopeStackTop - 1];
   int index = hash(name);
 
@@ -58,15 +59,16 @@ void st_insert(char * scopeName, char * name, ExpectedType type, int lineno, int
     l->lines = initLineList();
     insertLine(l->lines, lineno);
     l->memloc = loc;
-    l->next = hashTable[h];
+    l->expectedType = type;
+    l->next = currScope->bucket[index];
     l->paramNum = paramNum;
-    hashTable[h] = l;
+    currScope->bucket[index] = l;
   } else {
     insertLine(l->lines, lineno);
   }
 }
 
-Bucket st_lookup(char * name, char * scopeName) {
+Bucket st_lookup(char * scopeName, char * name) {
   Scope scope = NULL;
   Bucket bucket = NULL;
   int i, index;
@@ -76,9 +78,10 @@ Bucket st_lookup(char * name, char * scopeName) {
       break;
     }
   }
-  if(scope == NULL) return NULL;
+  if(scope == NULL) {
+    return NULL;
+  }
   index = hash(name);
-
   while(scope != NULL) {
     bucket = scope->bucket[index];
     while ((bucket != NULL) && strcmp(name, bucket->name)) {
@@ -92,7 +95,7 @@ Bucket st_lookup(char * name, char * scopeName) {
   return NULL;
 }
 
-Bucket st_lookup_excluding_parent(char * scope, char * name) {
+Bucket st_lookup_excluding_parent(char * scopeName, char * name) {
   Scope scope = NULL;
   Bucket bucket = NULL;
   int i, index;
@@ -112,4 +115,53 @@ Bucket st_lookup_excluding_parent(char * scope, char * name) {
   return bucket;
 }
 
+void printSymTabRows(Scope scope) {
+  Bucket * bucket = scope->bucket;
+  for(int i = 0; i < 221; i++) {
+    if(bucket[i] != NULL) {
+      Bucket b = bucket[i];
+      Lnode * lines = b->lines->head;
+      printf("%-9s ", b->name);
+      if(b->paramNum < 0) {
+        printf("Variable     ");
+      } else {
+        printf("Function     ");
+      }
+      switch(b->expectedType) {
+        case Void:
+          printf("Void         "); 
+          break;
+        case Integer: 
+          printf("Integer      ");
+          break;
+        case IntArr:
+          printf("Integer Arr  ");
+          break;
+        default :
+          ;
+      }
+      printf("%-14d", b->memloc);
+      do {
+        printf("%d ", lines->line);
+        lines = lines->next;
+      } while(lines != NULL);
+      printf("\n");
+    }
+  }
+}
 
+void printSymTab() {
+  printf("\n------------------\n");
+  printf(  "|  Symbol table  |\n");
+  printf(  "------------------\n\n");
+  
+  for(int i = 0; i < scopeArraySize; i++) {
+    Scope scope = scopeArray[i];
+    printf("Scope Name : %s\n", scope->name);
+    printf("-----------------------------------------------------------------------\n");
+    printf("Name      Type        Data Type     Location      Line Numbers \n");
+    printf("--------- ----------- ------------- ------------- ---------------------\n");
+    printSymTabRows(scope);
+    printf("-----------------------------------------------------------------------\n\n");
+  }
+}

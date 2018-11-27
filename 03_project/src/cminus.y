@@ -214,10 +214,12 @@ iterationstmt     : WHILE LPAREN expression RPAREN statement {
 
 returnstmt        : RETURN SEMI { 
                       $$ = newNode(ReturnStmt);
+                      $$->expectedType = Void;
                     };
                   | RETURN expression SEMI { 
                       $$ = newNode(ReturnStmt);
                       $$->child[0] = $2;
+                      $$->expectedType = $2->expectedType;
                     }
                   ;
 
@@ -225,6 +227,7 @@ expression        : var ASSIGN expression {
                       $$ = newNode(Expr);
                       $$->child[0] = $1;
                       $$->child[1] = $3;
+                      $$->expectedType = $1->expectedType;
                       /* We can check types here. */
                     };
                   | simpleexpression { 
@@ -236,6 +239,7 @@ var               : id {
                       $$ = newNode(Var);
                       $$->attr.name = $1->attr.name;
                       $$->isArray = 0;
+                      $$->expectedType = VoidArr;
                       free($1);
                       $1 = NULL;
                     };
@@ -246,6 +250,7 @@ var               : id {
                       $$->isArray = 1;
                       free($1);
                       $1 = NULL;
+                      $$->expectedType = IntArr;
                     }
                   ;
 
@@ -254,6 +259,7 @@ simpleexpression  : additiveexpr relop additiveexpr {
                       $$->child[0] = $1;
                       $$->child[1] = $3;
                       $$->attr.op = $2->attr.op;
+                      $$->expectedType = Integer;
                     };
                   | additiveexpr { $$ = $1; };
 
@@ -287,6 +293,7 @@ additiveexpr      : additiveexpr addop term {
                       $$->child[0] = $1;
                       $$->child[1] = $3;
                       $$->attr.op = $2->attr.op;
+                      $$->expectedType = Integer;
                     };
                   | term { $$ = $1; };
 
@@ -304,6 +311,7 @@ term              : term mulop factor {
                       $$->child[0] = $1;
                       $$->child[1] = $3;
                       $$->attr.op = $2->attr.op;
+                      $$->expectedType = Integer;
                     };
                   | factor { 
                       $$ = $1;
@@ -321,20 +329,24 @@ mulop             : TIMES {
 factor            : LPAREN expression RPAREN { 
                       $$ = newNode(Expr);
                       $$->child[0] = $2;
+                      $$->expectedType = $2->expectedType;
                     };
                   | var { $$ = $1; };
                   | call { $$ = $1; };
                   | num {
                       $$ = newNode(NumExpr);
                       $$->attr.value = $1->attr.value;
+                      $$->expectedType = Integer;
                     };
                   | PLUS num {
                       $$ = newNode(NumExpr);
                       $$->attr.value = $2->attr.value;
+                      $$->expectedType = Integer;
                     };
                   | MINUS num {
                       $$ = newNode(NumExpr);
                       $$->attr.value = ($2->attr.value) * (-1);
+                      $$->expectedType = Integer;
                     }
                   ;
 
@@ -344,6 +356,7 @@ call              : id LPAREN args RPAREN {
                       $$->attr.name = $1->attr.name;
                       free($1);
                       $1 = NULL;
+                      $$->expectedType = VoidArr;
                     };
 
 args              : arglist { 
