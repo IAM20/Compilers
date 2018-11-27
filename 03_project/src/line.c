@@ -34,6 +34,7 @@ int insertLine(LineList lines, unsigned int line) {
       break;
   }
   lines->size++;
+  return 0;
 }
 
 int deleteLineListTail(LineList lines) {
@@ -41,7 +42,7 @@ int deleteLineListTail(LineList lines) {
     return 0;
   }
 
-  Lnode * tmp = lines->tmp;
+  Lnode * tmp = lines->tail;
   lines->tail = lines->tail->prev;
   
   free(tmp);
@@ -51,7 +52,7 @@ int deleteLineListTail(LineList lines) {
 }
 
 void deleteLineList(LineList lines) {
-  while(deleteTail(lines));
+  while(deleteLineListTail(lines));
   free(lines);
   lines = NULL;
 }

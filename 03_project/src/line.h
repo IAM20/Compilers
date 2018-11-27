@@ -8,7 +8,7 @@ typedef struct lineList {
   unsigned int size;
   Lnode * head;
   Lnode * tail; // never deleted
-} * LineList
+} * LineList;
 
 
 Lnode * initLnode(unsigned int);
