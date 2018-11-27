@@ -1,11 +1,13 @@
+#include "symtab.h"
 #include "scan.h"
 #include "cminus.tab.h"
-#include "globals.h"
 #include "util.h"
+#include "analyze.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 FILE * code;
+TreeNode * AST;
 
 int
 main(int argc, char * argv[]) {
@@ -20,10 +22,13 @@ main(int argc, char * argv[]) {
   }
   
   yyin = code;
+  
   printf("C-MINUS COMPILATION: %s\n", argv[1]);
   
-  int token;
-  printTree(parse());
+  AST = parse();
+  buildSymtab(AST);
+  printSymTab();
+
 
   return 0;
 }
