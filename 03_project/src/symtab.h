@@ -1,6 +1,8 @@
 #include "line.h"
 #include "globals.h"
 
+#define VAR -1
+
 typedef struct bucket {
   char * name;
   ExpectedType expectedType;
@@ -26,7 +28,7 @@ Scope newScope(char *);
 void popScope();
 void pushScope(Scope scope);
 void insertScopeArr(Scope scope);
-void st_insert(char *, char *, ExpectedType, int, int, int);
+void stInsert(char *, char *, ExpectedType, int, int, int);
 void printSymTab();
-Bucket st_lookup(char *, char *);
-Bucket st_lookup_excluding_parent(char *, char *);
+Bucket stLookup(char *, char *);
+Bucket stLookupExcludingParent(char *, char *);

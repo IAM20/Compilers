@@ -123,7 +123,8 @@ printToken(int token) {
   return 0;
 }
 
-TreeNode * newNode(NodeKind nodeKind) {
+TreeNode * 
+newNode(NodeKind nodeKind) {
   TreeNode * t = (TreeNode *)malloc(sizeof(TreeNode));
   int i;
   if(t == NULL) {
@@ -142,7 +143,8 @@ TreeNode * newNode(NodeKind nodeKind) {
   return t;
 }
 
-char * copyString(char * s) {
+char * 
+copyString(char * s) {
   int n;
   char * retstr;
   if(s == NULL) {
@@ -192,14 +194,16 @@ void printTree(TreeNode * treeNode) {
 }
 */
 
-static void printSpaces(void) {
+static void 
+printSpaces(void) {
   int i;
   for(i = 0; i <indentno; i++) {
     printf(" ");
   }
 }
 
-void printType(ExpectedType type) {
+void 
+printType(ExpectedType type) {
   switch(type) {
     case Void:
       printf("type : void");
@@ -219,7 +223,8 @@ void printType(ExpectedType type) {
   }
 }
 
-void printOperation(TokenType op) {
+void 
+printOperation(TokenType op) {
   switch(op) {
     case ASSIGN:
       printf("=");
@@ -257,8 +262,10 @@ void printOperation(TokenType op) {
   }
 }
 
-void printTree( TreeNode * tree )
-{ int i;
+void 
+printTree( TreeNode * tree ) {
+
+  int i;
   INDENT;
   while (tree != NULL) {
     switch(tree->nodeKind) {
@@ -270,14 +277,17 @@ void printTree( TreeNode * tree )
           printf("If (condition) (body) (else)\n");
         }
         break;
+
       case CompStmt:
         printSpaces();
         printf("Compound statement : \n");
         break;
+
       case IterStmt:
         printSpaces();
         printf("While : \n");
         break;
+
       case ReturnStmt:
         printSpaces();
         if(tree->child[0] != NULL) {
@@ -286,30 +296,36 @@ void printTree( TreeNode * tree )
           printf("Return\n");
         }
         break;
+
       case Expr:
         printSpaces();
         printf("Assign : (destintion) (source)\n");
         break;
+
       case SimExpr:
         printSpaces();
         printf("Operation : ");
         printOperation(tree->attr.op);
         printf("\n");
         break;
+
       case AdditiveExpr:
         printSpaces();
         printf("Operation : ");
         printOperation(tree->attr.op);
         printf("\n");
         break;
+
       case NumExpr:
         printSpaces();
         printf("Const : %d\n", tree->attr.value);
         break;
+
       case IdExpr:
         printSpaces();
         printf("ID : %s\n", tree->attr.name);
         break;
+
       case VarDeclar:
         printSpaces();
         printf("Var declaration, name : %s, ", tree->attr.name);
@@ -320,6 +336,7 @@ void printTree( TreeNode * tree )
         }
         printf("\n");
         break;
+
       case FunDeclar:
         printSpaces();
         printf("Function delcaration, name : %s, return ",
@@ -327,6 +344,7 @@ void printTree( TreeNode * tree )
         printType(tree->expectedType);
         printf("\n");
         break;
+
       case Param:
         printSpaces();
         printf("Single Parameter, ");
@@ -334,6 +352,7 @@ void printTree( TreeNode * tree )
         printType(tree->expectedType);
         printf("\n");
         break;
+
       case Var:
         printSpaces();
         printf("Id : %s", tree->attr.name);
@@ -341,18 +360,22 @@ void printTree( TreeNode * tree )
           printf(", at value below");
         } printf("\n");
         break;
+
       case Func:
         printSpaces();
         printf("Call, name : %s, with arguments below\n", tree->attr.name);
         break;
+
       case ExprStmt:
         /* Nothing to print. */
         break;
+
       default:
         printSpaces();
         printf("Unknown node kind\n");
         break;
-    }  
+    }
+
     for (i=0;i<MAXCHILDREN;i++) {
       if(tree->child[i] != NULL) {   
         printTree(tree->child[i]);

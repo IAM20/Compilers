@@ -11,6 +11,7 @@ TreeNode * AST;
 
 int
 main(int argc, char * argv[]) {
+  
   if(argc != 2) {
     fprintf(stderr, "USAGE : %s FILE_NAME\n", argv[0]);
     return 0;
@@ -26,9 +27,9 @@ main(int argc, char * argv[]) {
   printf("C-MINUS COMPILATION: %s\n", argv[1]);
   
   AST = parse();
-  buildSymtab(AST);
+  semanticAnalysis(AST);
+  
   printSymTab();
-
 
   return 0;
 }

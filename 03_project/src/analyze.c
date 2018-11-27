@@ -2,13 +2,19 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define TRUE      1
+#define FALSE     0
+
+typedef int bool;
+
 static int isFirstCompoundStmt = 0;
 static int locationCounter = 0;
 static int globalCounter = 0;
 
-static void traverse(TreeNode * t, 
-    void(* preProc)(TreeNode *), 
-    void(* postProc)(TreeNode *)) {
+static void 
+traverse (TreeNode * t, 
+         void(* preProc)(TreeNode *), 
+         void(* postProc)(TreeNode *)) {
   if(t != NULL) {
     preProc(t);
     for(int i = 0; i < MAXCHILDREN; i++) {
@@ -19,21 +25,95 @@ static void traverse(TreeNode * t,
   }
 }
 
-static void popAfterInsertProc(TreeNode * t) {
+static void 
+popAfterInsertProc (TreeNode * t) {
   if(t == NULL) return;
   if(t->nodeKind == CompStmt) {
     popScope();
   }
 }
 
-static void insertNode(TreeNode * t) {
+ExpectedType 
+getTypeOfID (char * scopeName, char * name) {
+  Bucket bucket;
+  bucket = stLookup(scopeName, name);
+  if(bucket == NULL) {
+    printf("ID : %s is not declared\n", name);
+    exit(1);
+  }
+  return bucket->expectedType;
+}
+
+// TODO
+bool 
+checkTypeErrorAtReturnStmt(TreeNode * t) {
+  char * currScopeName;
+  Bucket tempBucket;
+  
+  currScopeName = currScope()->name;
+  tempBucket = stLookup("global", currScopeName);
+
+  if(tempBucket == NULL || tempBucket->paramNum < 0) {
+    /* Something is wrong! This may not be happen */
+    printf("Unexpected return statement in line %d\n", t->lineno);
+    return TRUE;
+  } else if(tempBucket->expectedType == Void && t->child[0] != NULL) {
+    printf("Return error in line %d: function %s must not have return value\n",
+            t->lineno,
+            tempBucket->name);
+    return TRUE;
+  } else if(tempBucket->expectedType != Void && t->child[0] == NULL) {
+    printf("Return error in line %d: function %s must have return value.\n",
+            t->lineno,
+            tempBucket->name);
+    return TRUE;
+  } else if(tempBucket->expectedType != t->expectedType) {
+    if(t->expectedType == VoidArr) {
+      if(tempBucket->expectedType != getTypeOfID(currScope()->name, t->child[0]->attr.name)) {
+        printf("Return type error in line %d\n", t->lineno);
+        return TRUE;
+      }
+    } else {
+      printf("Return type error in line %d\n", t->lineno);
+      return TRUE;
+    }
+  }
+
+
+  return FALSE;
+}
+
+// TODO
+bool 
+checkTypeErrorAtExpr(TreeNode * t) {
+  Bucket tempBucket;
+  ExpectedType typeLeft = t->child[0]->expectedType;
+  ExpectedType typeRight = t->child[1]->expectedType; 
+  
+  if(t->child[0] != NULL && typeLeft == VoidArr) {
+    typeLeft = getTypeOfID(currScope()->name, t->child[0]->attr.name);
+  }
+  
+  if(t->child[1] != NULL && typeRight== VoidArr) {
+    typeRight = getTypeOfID(currScope()->name, t->child[1]->attr.name);
+  }
+
+  if(typeLeft != typeRight) {
+    printf("Type assign error in line %d\n", t->lineno);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static void 
+insertNode(TreeNode * t) {
   int argNums;
   int numParams;
   char * currScopeName;
   Bucket tempBucket;
-  Bucket subBucket;
+  
   switch (t->nodeKind) {
-    //case IfStmt:
     case CompStmt:
       if(!isFirstCompoundStmt) {
         Scope scope = newScope(currScope()->name);
@@ -42,75 +122,20 @@ static void insertNode(TreeNode * t) {
       }
       isFirstCompoundStmt = 0;
       break;
-    //case IterStmt:
     case ReturnStmt:
-      // Return type check
-      currScopeName = currScope()->name;
-      tempBucket = st_lookup("global", currScopeName);
-      if(tempBucket == NULL) {
-        printf("Unexpected error in line %d\n", t->lineno);
+      if(checkTypeErrorAtReturnStmt(t)) {
+        /* There's an type error! */
         exit(1);
-      } else if(tempBucket->paramNum < 0) {
-        printf("Unexpected return statement in line %d\n", t->lineno);
-        exit(1);
-      } else if(tempBucket->expectedType == Void && t->child[0] != NULL) {
-        printf("Return error in line %d: function %s has void return type\n", t->lineno, tempBucket->name);
-        exit(1);
-      } else if(tempBucket->expectedType != Void && t->child[0] == NULL) {
-        printf("Return error in line %d: function %s must have return value\n", t->lineno, tempBucket->name);
-        exit(1);
-      }  else if(tempBucket->expectedType != t->expectedType) {
-        if(t->expectedType == VoidArr) {
-          subBucket = st_lookup(currScope()->name, t->child[0]->attr.name);
-          if(subBucket == NULL) {
-            printf("Function call exception\n");
-            exit(1);
-          }
-          if(subBucket->expectedType != tempBucket->expectedType) {
-            printf("Return type error in line %d\n", t->lineno);
-            printf("Expected type : %d\n", tempBucket->expectedType);
-            printf("Actual type : %d\n", subBucket->expectedType);
-          }
-        } else {
-          printf("Return type error in line %d\n", t->lineno);
-          printf("Expected type : %d\n", tempBucket->expectedType);
-          printf("Actual type : %d\n", subBucket->expectedType);
-          exit(1);
-        }
       }
       break;
     case Expr:
-      if(t->child[1] != NULL && t->child[1]->expectedType == VoidArr) {
-        tempBucket = st_lookup(currScope()->name, t->child[1]->attr.name);
-        if(tempBucket == NULL) {
-          printf("Undefined variable %s in line %d\n", t->child[1]->attr.name, t->lineno);
-          exit(1);
-        }
-        t->child[1]->expectedType = tempBucket->expectedType;
-      }
-      if(t->child[0] != NULL && t->child[0]->expectedType == VoidArr) {
-        tempBucket = st_lookup(currScope()->name, t->child[0]->attr.name);
-        if(tempBucket == NULL) {
-          printf("Undefined variable %s in line %d\n", t->child[0]->attr.name, t->lineno);
-          exit(1);
-        }
-        t->child[0]->expectedType = tempBucket->expectedType;
-      }
-
-      if(t->child[0]->expectedType != t->child[1]->expectedType) {
-        printf("Type assign error in line %d\n", t->lineno);
-        printf("Expected type : %d\n", t->child[0]->expectedType);
-        printf("Actual type : %d\n", t->child[1]->expectedType);
-        printSymTab();
+      if(checkTypeErrorAtExpr(t)) {
+        /* There's an type error! */
         exit(1);
       }
       break;
-    //case SimExpr:
-    //case AdditiveExpr:
-    //case NumExpr:
-    //case IdExpr:
     case VarDeclar:
-      if(st_lookup_excluding_parent(currScope()->name, t->attr.name) != NULL) {
+      if(stLookupExcludingParent(currScope()->name, t->attr.name) != NULL) {
         printf("Redefinition of variable!\n");
         exit(1);
       }
@@ -121,24 +146,32 @@ static void insertNode(TreeNode * t) {
       }
 
       if(strcmp(currScope()->name, "global")) {
-        st_insert(currScope()->name, t->attr.name, 
-            t->expectedType, t->lineno, locationCounter++, -1);
+        stInsert( currScope()->name, 
+                  t->attr.name, 
+                  t->expectedType, 
+                  t->lineno, 
+                  locationCounter++, 
+                  VAR);
       } else {
-        st_insert(currScope()->name, 
+        stInsert( currScope()->name, 
                   t->attr.name,
                   t->expectedType,
                   t->lineno,
                   globalCounter++,
-                  -1);
+                  VAR);
       }
+      
       break;
+
     case FunDeclar:
       locationCounter = 0;
-      if(st_lookup(currScope()->name, t->attr.name) != NULL) {
+      numParams = 0;
+      
+      if(stLookup(currScope()->name, t->attr.name) != NULL) {
         printf("Redefinition of function\n");
         exit(1);
       }
-      numParams = 0;
+      
       if((t->child[0]->expectedType != Void) && (t->child[0]->expectedType != VoidArr)) {
         TreeNode * temp = t->child[0];
         do {
@@ -146,37 +179,55 @@ static void insertNode(TreeNode * t) {
           temp = temp->sibling;
         } while(temp != NULL);
       }
+
       if(strcmp(currScope()->name, "global") == 0) {
-        st_insert("global", t->attr.name, t->expectedType, t->lineno, globalCounter++, numParams);
+        stInsert( "global", 
+                  t->attr.name, 
+                  t->expectedType, 
+                  t->lineno, 
+                  globalCounter++, 
+                  numParams);
       }
+      
       Scope scope = newScope(t->attr.name);
       scope->parent = currScope();
       pushScope(scope);
       isFirstCompoundStmt = 1;
+      
       break;
     case Param:
+      
       if(t->expectedType != Void) {
-        if(st_lookup_excluding_parent(currScope()->name, t->attr.name) != NULL) {
+        if(stLookupExcludingParent(currScope()->name, t->attr.name) != NULL) {
           printf("Redefinition of parameter\n");
           exit(1);
         }
 
-      st_insert(currScope()->name, t->attr.name, t->expectedType, t->lineno, locationCounter++, -1);
+      stInsert( currScope()->name, 
+                t->attr.name, 
+                t->expectedType, 
+                t->lineno, 
+                locationCounter++, 
+                VAR);
       }
       break;
     case Var:
       //If undeclared var throw exception
-      if(st_lookup(currScope()->name, t->attr.name) == NULL) {
+      if(stLookup(currScope()->name, t->attr.name) == NULL) {
         printf("current scope : %s\n", currScope()->name);
         printf("Undeclared variable %s at line %d\n", t->attr.name, t->lineno);
         printSymTab();
         exit(1);
       }
+      
       break;
+    
     case Func:
+      /* Function call semantic analysis, just check number of parameter.  */
       argNums = 0;
       tempBucket = NULL;
-      if((tempBucket = st_lookup(currScope()->name, t->attr.name)) == NULL) {
+
+      if((tempBucket = stLookup(currScope()->name, t->attr.name)) == NULL) {
         printf("Function \"%s\" does not exist.\n", t->attr.name);
         exit(1);
       } else {
@@ -194,14 +245,27 @@ static void insertNode(TreeNode * t) {
 
       //function call check argument number
       break;
-    //case ExprStmt:
+
+ /* 
+  * case IterStmt:
+  * case IfStmt:
+  *   This two are checked by parser.
+  *
+  * case ExprStmt:
+  * case SimExpr:
+  * case AdditiveExpr:
+  * case NumExpr:
+  * case IdExpr:
+  *   Useless cases
+  */
     default:
       ;
   }
 }
 
 
-void buildSymtab(TreeNode * syntaxTree) {
+void 
+semanticAnalysis (TreeNode * syntaxTree) {
   if(syntaxTree == NULL) {
     printf("Invalid AST\n");
     return;
@@ -209,11 +273,10 @@ void buildSymtab(TreeNode * syntaxTree) {
   scopeStackTop = scopeArraySize = 0;
   Scope globalScope = newScope("global");
   pushScope(globalScope);
-  st_insert("global", "input", Integer, 0, globalCounter++, 0);
-  st_insert("global", "output", Void, 0, globalCounter++, 1);
+  stInsert("global", "input", Integer, 0, globalCounter++, 0);
+  stInsert("global", "output", Void, 0, globalCounter++, 1);
   
 
   traverse(syntaxTree, insertNode, popAfterInsertProc);
   popScope();
-  //printSymTab();
 }

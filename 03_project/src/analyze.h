@@ -1,1 +1,1 @@
-void buildSymtab(TreeNode *);
+void semanticAnalysis(TreeNode *);

@@ -6,7 +6,8 @@
 #define SHIFT 4
 #define SIZE 211
 
-static int hash (char * key) {
+static int 
+hash (char * key) {
   int temp = 0;
   int i = 0;
   while(key[i] != '\0') {
@@ -14,11 +15,13 @@ static int hash (char * key) {
   } return temp;
 }
 
-Scope currScope() {
+Scope 
+currScope() {
   return scopeStack[scopeStackTop - 1];
 }
 
-Scope newScope(char * scopeName) {
+Scope 
+newScope(char * scopeName) {
   Scope tmp = (Scope)malloc(sizeof(struct scope));
   if(tmp == NULL) {
     perror("Failed to memory allocation");
@@ -31,20 +34,30 @@ Scope newScope(char * scopeName) {
   return tmp;
 }
 
-void popScope() {
+void 
+popScope() {
   scopeStack[--scopeStackTop] = NULL;
 }
 
-void pushScope(Scope scope) {
+void 
+pushScope(Scope scope) {
   scopeStack[scopeStackTop++] = scope;
   insertScopeArr(scope);
 }
 
-void insertScopeArr(Scope scope) {
+void 
+insertScopeArr(Scope scope) {
   scopeArray[scopeArraySize++] = scope;
 }
 
-void st_insert(char * scopeName, char * name, ExpectedType type, int lineno, int loc, int paramNum) {
+void 
+stInsert (char * scopeName, 
+          char * name,
+          ExpectedType type, 
+          int lineno, 
+          int loc, 
+          int paramNum) {
+  
   Scope currScope = scopeStack[scopeStackTop - 1];
   int index = hash(name);
 
@@ -66,22 +79,29 @@ void st_insert(char * scopeName, char * name, ExpectedType type, int lineno, int
   } else {
     insertLine(l->lines, lineno);
   }
+
 }
 
-Bucket st_lookup(char * scopeName, char * name) {
+Bucket 
+stLookup (char * scopeName, char * name) {
+  
   Scope scope = NULL;
   Bucket bucket = NULL;
   int i, index;
+  
   for(i = 0; i < scopeArraySize; i++) {
     if(strcmp(scopeArray[i]->name, scopeName) == 0) {
       scope = scopeArray[i];
       break;
     }
   }
+  
   if(scope == NULL) {
     return NULL;
   }
+  
   index = hash(name);
+  
   while(scope != NULL) {
     bucket = scope->bucket[index];
     while ((bucket != NULL) && strcmp(name, bucket->name)) {
@@ -92,19 +112,23 @@ Bucket st_lookup(char * scopeName, char * name) {
     }
     scope = scope->parent;
   }
+  
   return NULL;
 }
 
-Bucket st_lookup_excluding_parent(char * scopeName, char * name) {
+Bucket 
+stLookupExcludingParent(char * scopeName, char * name) {
   Scope scope = NULL;
   Bucket bucket = NULL;
   int i, index;
+  
   for(i = 0; i < scopeArraySize; i++) {
     if(strcmp(scopeArray[i]->name, scopeName) == 0) {
       scope = scopeArray[i];
       break;
     }
   }
+  
   if(scope == NULL) return NULL;
   index = hash(name);
 
@@ -112,10 +136,12 @@ Bucket st_lookup_excluding_parent(char * scopeName, char * name) {
   while ((bucket != NULL) && strcmp(name, bucket->name)) {
     bucket = bucket->next;
   }
+  
   return bucket;
 }
 
-void printSymTabRows(Scope scope) {
+void 
+printSymTabRows(Scope scope) {
   Bucket * bucket = scope->bucket;
   for(int i = 0; i < 221; i++) {
     if(bucket[i] != NULL) {
@@ -150,7 +176,8 @@ void printSymTabRows(Scope scope) {
   }
 }
 
-void printSymTab() {
+void 
+printSymTab() {
   printf("\n------------------\n");
   printf(  "|  Symbol table  |\n");
   printf(  "------------------\n\n");
