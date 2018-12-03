@@ -250,7 +250,7 @@ var               : id {
                       $$->isArray = 1;
                       free($1);
                       $1 = NULL;
-                      $$->expectedType = IntArr;
+                      $$->expectedType = Integer;
                     }
                   ;
 
