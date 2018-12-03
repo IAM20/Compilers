@@ -82,6 +82,29 @@ stInsert (char * scopeName,
 
 }
 
+Bucket
+stLookupWithScope(Scope scope, char * name) {
+  if(scope == NULL) {
+    return NULL;
+  }
+  
+  Bucket bucket = NULL;
+  int index = hash(name);
+  
+  while(scope != NULL) {
+    bucket = scope->bucket[index];
+    while((bucket != NULL) && strcmp(name, bucket->name)) {
+      bucket = bucket->next;
+    }
+    if(bucket != NULL) {
+      return bucket;
+    }
+    scope = scope->parent;
+  }
+
+  return NULL;
+}
+
 Bucket 
 stLookup (char * scopeName, char * name) {
   
@@ -99,23 +122,24 @@ stLookup (char * scopeName, char * name) {
   if(scope == NULL) {
     return NULL;
   }
-  
-  index = hash(name);
-  
-  while(scope != NULL) {
-    bucket = scope->bucket[index];
-    while ((bucket != NULL) && strcmp(name, bucket->name)) {
-      bucket = bucket->next;
-    }
-    if(bucket != NULL) {
-      return bucket;
-    }
-    scope = scope->parent;
-  }
-  
-  return NULL;
+  return stLookupWithScope(scope, name);
 }
 
+Bucket
+stLookupExcludingParentWithScope(Scope scope, char * name) {
+  if(scope == NULL) {
+    return NULL;
+  }
+  Bucket bucket = NULL;
+  int index = hash(name);
+  
+  bucket = scope->bucket[index];
+  while((bucket != NULL) && strcmp(name, bucket->name)) {
+    bucket = bucket->next;
+  }
+
+  return bucket;
+}
 Bucket 
 stLookupExcludingParent(char * scopeName, char * name) {
   Scope scope = NULL;
@@ -129,15 +153,7 @@ stLookupExcludingParent(char * scopeName, char * name) {
     }
   }
   
-  if(scope == NULL) return NULL;
-  index = hash(name);
-
-  bucket = scope->bucket[index];
-  while ((bucket != NULL) && strcmp(name, bucket->name)) {
-    bucket = bucket->next;
-  }
-  
-  return bucket;
+  return stLookupExcludingParentWithScope(scope, name);
 }
 
 void 

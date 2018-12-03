@@ -38,7 +38,7 @@ popAfterInsertProc (TreeNode * t) {
 ExpectedType
 getTypeOfID (TreeNode * t) {
   Bucket bucket;
-  bucket = stLookup(currScope()->name, t->attr.name);
+  bucket = stLookupWithScope(currScope(), t->attr.name);
   if(bucket == NULL) {
     printf("Line %d : identifier %s is not declared\n", t->lineno, t->attr.name);
     printf("Terminate the compilation, please check line number %d first\n", t->lineno);
@@ -138,7 +138,7 @@ insertNode(TreeNode * t) {
       }
       break;
     case VarDeclar:
-      if(stLookupExcludingParent(currScope()->name, t->attr.name) != NULL) {
+      if(stLookupExcludingParentWithScope(currScope(), t->attr.name) != NULL) {
         printf("Line %d : Redefinition of variable %s\n", t->lineno, t->attr.name);
         return TRUE;
       }
@@ -170,7 +170,7 @@ insertNode(TreeNode * t) {
       locationCounter = 0;
       numParams = 0;
       
-      if(stLookup(currScope()->name, t->attr.name) != NULL) {
+      if(stLookupWithScope(currScope(), t->attr.name) != NULL) {
         printf("Line %d : Redefinition of function %s\n", t->lineno, t->attr.name);
         return TRUE;
       }
@@ -201,7 +201,7 @@ insertNode(TreeNode * t) {
     case Param:
       
       if(t->expectedType != Void) {
-        if(stLookupExcludingParent(currScope()->name, t->attr.name) != NULL) {
+        if(stLookupExcludingParentWithScope(currScope(), t->attr.name) != NULL) {
           printf("Line %d : Redefinition of parameter %s\n", t->lineno, t->attr.name);
           return TRUE;
         }
@@ -217,7 +217,7 @@ insertNode(TreeNode * t) {
       break;
     case Var:
       //If undeclared var throw exception
-      if(stLookup(currScope()->name, t->attr.name) == NULL) {
+      if(stLookupWithScope(currScope(), t->attr.name) == NULL) {
         printf("Line %d : undeclared variable %s", t->lineno, t->attr.name);
         return TRUE;
       }
@@ -228,7 +228,7 @@ insertNode(TreeNode * t) {
       argNums = 0;
       tempBucket = NULL;
 
-      if((tempBucket = stLookup(currScope()->name, t->attr.name)) == NULL) {
+      if((tempBucket = stLookupWithScope(currScope(), t->attr.name)) == NULL) {
         printf("Line %d : Function \"%s\" does not exist.\n", t->lineno, t->attr.name);
         return TRUE;
       } else {

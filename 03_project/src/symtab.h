@@ -16,6 +16,7 @@ typedef struct scope {
   char * name;
   Bucket bucket[221];
   struct scope * parent;
+  int nestedDepth;
 } * Scope;
 
 static Scope scopeStack[211];
@@ -31,4 +32,6 @@ void insertScopeArr(Scope scope);
 void stInsert(char *, char *, ExpectedType, int, int, int);
 void printSymTab();
 Bucket stLookup(char *, char *);
+Bucket stLookupWithScope(Scope, char *);
 Bucket stLookupExcludingParent(char *, char *);
+Bucket stLookupExcludingParentWithScope(Scope, char *);
