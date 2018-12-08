@@ -1,8 +1,6 @@
 /****************************************************/
-/* File: tiny.y                                     */
-/* The TINY Yacc/Bison specification file           */
-/* Compiler Construction: Principles and Practice   */
-/* Kenneth C. Louden                                */
+/* Copyright (c) 2018 Gangster park                 */
+/* 성경 대문짝 대성경 문짝 문짝 대성경              */
 /****************************************************/
 %{
 #define YYPARSER /* distinguishes Yacc output from other code files */

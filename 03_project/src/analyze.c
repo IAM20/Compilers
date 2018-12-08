@@ -57,7 +57,7 @@ checkTypeErrorAtReturnStmt(TreeNode * t) {
 
   if(tempBucket == NULL || tempBucket->paramNum < 0) {
     /* Something is wrong! This may not be happen */
-    printf("Line %d : Unexpected return statement", t->lineno);
+    printf("Line %d : Unexpected return statement\n", t->lineno);
     return TRUE;
   } else if(tempBucket->expectedType == Void && t->child[0] != NULL) {
     printf("Line %d : function %s must not have return value\n",
@@ -200,7 +200,7 @@ insertNode(TreeNode * t) {
       break;
     case Param:
       
-      if(t->expectedType != Void) {
+      if(t->expectedType != Void || t->expectedType != VoidArr) {
         if(stLookupExcludingParentWithScope(currScope(), t->attr.name) != NULL) {
           printf("Line %d : Redefinition of parameter %s\n", t->lineno, t->attr.name);
           return TRUE;
@@ -212,6 +212,11 @@ insertNode(TreeNode * t) {
                 t->lineno, 
                 locationCounter++, 
                 VAR);
+      } else {
+        if(strcmp(t->attr.name, "(void)")) {
+          printf("Line %d : wrong type of argument %s\n", t->lineno, t->attr.name);
+          return TRUE;
+        }
       }
       
       break;
@@ -220,6 +225,12 @@ insertNode(TreeNode * t) {
       if(stLookupWithScope(currScope(), t->attr.name) == NULL) {
         printf("Line %d : undeclared variable %s", t->lineno, t->attr.name);
         return TRUE;
+      }
+      if(t->child[0] != NULL) {
+        if(t->child[0]->expectedType != Integer) {
+          printf("Line %d : unexpected type in array\n", t->lineno);
+          return TRUE;
+        }
       }
       break;
     
