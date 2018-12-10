@@ -1,0 +1,11 @@
+void ret(void) {
+  return;
+}
+
+void rett(void) {
+  return ret();
+}
+
+void main(void) {
+  return rett();
+}

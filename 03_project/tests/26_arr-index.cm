@@ -3,6 +3,11 @@ void index(int a) {
   return;
 }
 
+int indexes(int a) {
+  int a[10];
+  return a[];
+}
+
 int main(void) {
   int a[10];
   a[1] = a[index(10)];

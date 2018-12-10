@@ -51,7 +51,7 @@ bool
 checkTypeErrorAtReturnStmt(TreeNode * t) {
   char * currScopeName;
   Bucket tempBucket;
-  
+  ExpectedType tempType;
   currScopeName = currScope()->name;
   tempBucket = stLookup("global", currScopeName);
 
@@ -60,10 +60,17 @@ checkTypeErrorAtReturnStmt(TreeNode * t) {
     printf("Line %d : Unexpected return statement\n", t->lineno);
     return TRUE;
   } else if(tempBucket->expectedType == Void && t->child[0] != NULL) {
-    printf("Line %d : function %s must not have return value\n",
-            t->lineno,
-            tempBucket->name);
-    return TRUE;
+    if(t->child[0]->expectedType == VoidArr) {
+      tempType = getTypeOfID(t); 
+    } else {
+      tempType = t->child[0]->expectedType;
+    }
+    if(tempType  != Void) {
+      printf("Line %d : function %s must not have return value\n",
+              t->lineno,
+              tempBucket->name);
+      return TRUE;
+    }
   } else if(tempBucket->expectedType != Void && t->child[0] == NULL) {
     printf("Line %d: function %s must have return value.\n",
             t->lineno,
@@ -200,18 +207,17 @@ insertNode(TreeNode * t) {
       break;
     case Param:
       
-      if(t->expectedType != Void || t->expectedType != VoidArr) {
+      if(t->expectedType != Void && t->expectedType != VoidArr) {
         if(stLookupExcludingParentWithScope(currScope(), t->attr.name) != NULL) {
           printf("Line %d : Redefinition of parameter %s\n", t->lineno, t->attr.name);
           return TRUE;
         }
-
-      stInsert( currScope()->name, 
-                t->attr.name, 
-                t->expectedType, 
-                t->lineno, 
-                locationCounter++, 
-                VAR);
+        stInsert( currScope()->name, 
+                  t->attr.name, 
+                  t->expectedType, 
+                  t->lineno, 
+                  locationCounter++, 
+                  VAR);
       } else {
         if(strcmp(t->attr.name, "(void)")) {
           printf("Line %d : wrong type of argument %s\n", t->lineno, t->attr.name);
